@@ -1,9 +1,9 @@
-using Audiobookshelf.Mobile.Services;
+using Saga.Services;
 using System;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 
-namespace Audiobookshelf.Mobile
+namespace Saga
 {
     public partial class LoginPage : ContentPage
     {

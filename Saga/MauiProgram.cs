@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Audiobookshelf.Mobile;
+namespace Saga;
 
 public static class MauiProgram
 {

@@ -1,4 +1,4 @@
-namespace Audiobookshelf.Mobile;
+namespace Saga;
 
 public partial class App : Application
 {

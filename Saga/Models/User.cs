@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Audiobookshelf.Mobile.Models
+namespace Saga.Models
 {
     public class User
     {

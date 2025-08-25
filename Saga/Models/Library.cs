@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
-namespace Audiobookshelf.Mobile.Models
+namespace Saga.Models
 {
     public class Library
     {

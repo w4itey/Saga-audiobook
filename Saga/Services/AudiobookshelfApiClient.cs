@@ -1,10 +1,10 @@
-using Audiobookshelf.Mobile.Models;
+using Saga.Models;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Audiobookshelf.Mobile.Services
+namespace Saga.Services
 {
     public class AudiobookshelfApiClient
     {
