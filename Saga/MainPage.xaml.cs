@@ -12,6 +12,7 @@ namespace Saga
             InitializeComponent();
         }
 
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -21,12 +22,13 @@ namespace Saga
                 var token = Preferences.Get("AuthToken", string.Empty);
                 var serverUrl = Preferences.Get("ServerUrl", string.Empty);
 
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
-                {
-                    // Not logged in, so navigate to login page
-                    Application.Current.MainPage = new LoginPage();
-                    return;
-                }
+                // REMOVE THIS BLOCK OF CODE
+                // if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
+                // {
+                //     // Not logged in, so navigate to login page
+                //     Application.Current.MainPage = new LoginPage();
+                //     return;
+                // }
 
                 var apiClient = new AudiobookshelfApiClient();
                 var libraries = await apiClient.GetLibrariesAsync(serverUrl, token);
