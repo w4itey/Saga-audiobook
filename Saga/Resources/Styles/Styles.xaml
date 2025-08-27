@@ -15,7 +15,6 @@
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{StaticResource White}" />
         <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="14,10"/>
@@ -27,20 +26,17 @@
 
     <Style TargetType="DatePicker">
         <Setter Property="TextColor" Value="{StaticResource Gray900}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
     <Style TargetType="Editor">
         <Setter Property="TextColor" Value="{StaticResource Black}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="PlaceholderColor" Value="{StaticResource Gray500}" />
     </Style>
 
     <Style TargetType="Entry">
         <Setter Property="TextColor" Value="{StaticResource Black}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="PlaceholderColor" Value="{StaticResource Gray500}" />
     </Style>
@@ -59,7 +55,6 @@
 
     <Style TargetType="Label">
         <Setter Property="TextColor" Value="{StaticResource Black}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
@@ -70,7 +65,6 @@
     <Style TargetType="Picker">
         <Setter Property="TextColor" Value="{StaticResource Gray900}" />
         <Setter Property="TitleColor" Value="{StaticResource Gray900}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
@@ -79,14 +73,13 @@
     </Style>
 
     <Style TargetType="RadioButton">
-        <Setter Property="ContentColor" Value="{StaticResource Primary}" />
+        <Setter Property="TextColor" Value="{StaticResource Primary}" />
     </Style>
 
     <Style TargetType="SearchBar">
         <Setter Property="TextColor" Value="{StaticResource Gray900}" />
         <Setter Property="PlaceholderColor" Value="{StaticResource Gray500}" />
         <Setter Property="CancelButtonColor" Value="{StaticResource Gray500}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
@@ -107,7 +100,6 @@
 
     <Style TargetType="TimePicker">
         <Setter Property="TextColor" Value="{StaticResource Gray900}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 

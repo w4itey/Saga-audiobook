@@ -1,3 +1,5 @@
+using Microsoft.Maui.Storage;
+
 namespace Saga;
 
 public partial class App : Application
@@ -12,7 +14,7 @@ public partial class App : Application
         if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
         {
             // Not logged in, so show the login page
-            MainPage = new LoginPage();
+            MainPage = new NavigationPage(new LoginPage());
         }
         else
         {

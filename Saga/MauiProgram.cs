@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Saga.Services;
 
 namespace Saga;
 
@@ -8,12 +9,11 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
-			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			});
+			.UseMauiApp<App>();
+
+		// Register services
+		builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+		builder.Services.AddTransient<AudiobookshelfApiClient>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

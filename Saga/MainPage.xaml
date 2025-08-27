@@ -4,7 +4,7 @@
              x:Class="Saga.MainPage">
 
     <Grid>
-        <CollectionView x:Name="LibrariesCollectionView">
+        <CollectionView x:Name="LibrariesCollectionView" SelectionMode="Single" SelectionChanged="OnLibrarySelected">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout Padding="10">
