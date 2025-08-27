@@ -409,5 +409,87 @@ namespace Saga.Services
 
             return null;
         }
+
+        public async Task<List<Shelf>> GetPersonalizedViewAsync(string serverUrl, string token, string libraryId)
+        {
+            try
+            {
+                _httpClient.Timeout = TimeSpan.FromSeconds(30);
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var url = $"{serverUrl}/api/libraries/{libraryId}/personalized";
+                System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Response content: {responseContent}");
+
+                    var shelves = JsonSerializer.Deserialize<List<Shelf>>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    System.Diagnostics.Debug.WriteLine($"Deserialized shelves: {shelves?.Count ?? 0}");
+                    return shelves;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetPersonalizedViewAsync Exception: {ex.Message}");
+                throw;
+            }
+
+            return null;
+        }
+
+        public async Task<LibraryItem> GetLibraryItemAsync(string serverUrl, string token, string itemId)
+        {
+            try
+            {
+                _httpClient.Timeout = TimeSpan.FromSeconds(30);
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var url = $"{serverUrl}/api/items/{itemId}?expanded=1";
+                System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Response content: {responseContent}");
+
+                    var item = JsonSerializer.Deserialize<LibraryItem>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    System.Diagnostics.Debug.WriteLine($"Deserialized item: {item?.Id}");
+                    return item;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetLibraryItemAsync Exception: {ex.Message}");
+                throw;
+            }
+
+            return null;
+        }
     }
 }

@@ -78,49 +78,7 @@ namespace Saga
         {
             if (e.CurrentSelection.FirstOrDefault() is Library selectedLibrary)
             {
-                // Show loading indicator
-                LoadingIndicator.IsRunning = true;
-                LoadingIndicator.IsVisible = true;
-                
-                try
-                {
-                    var currentUser = await _authService.GetCurrentUserAsync();
-                    var token = await _authService.GetValidTokenAsync();
-                    var serverUrl = currentUser?.ServerUrls.FirstOrDefault();
-
-                    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
-                    {
-                        await DisplayAlert("Authentication Error", "Authentication expired. Please login again.", "OK");
-                        Application.Current.MainPage = new NavigationPage(new LoginPage());
-                        return;
-                    }
-                    
-                    var apiClient = new AudiobookshelfApiClient();
-                    var books = await apiClient.GetLibraryItemsAsync(serverUrl, token, selectedLibrary.Id);
-                    
-                    if (books != null && books.Any())
-                    {
-                        // For now, just show the book titles - later we'll create proper book models
-                        var bookTitles = books.Select(b => new Library { 
-                            Id = b.Id, 
-                            Name = b.Media?.Metadata?.Title ?? "Unknown Title" 
-                        }).ToList();
-                        LibrariesCollectionView.ItemsSource = bookTitles;
-                    }
-                    else
-                    {
-                        await DisplayAlert("No Books", $"No books found in library '{selectedLibrary.Name}'.", "OK");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    await DisplayAlert("Error", $"Error loading books: {ex.Message}", "OK");
-                }
-                finally
-                {
-                    LoadingIndicator.IsRunning = false;
-                    LoadingIndicator.IsVisible = false;
-                }
+                await Shell.Current.GoToAsync($"{nameof(LibraryPage)}?libraryId={selectedLibrary.Id}");
             }
             
             // Clear selection

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Saga.Models"
+             x:Class="Saga.LibraryPage"
+             Title="Library">
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="10">
+
+            <!-- Continue Reading -->
+            <Label Text="Continue Reading" FontSize="Large" FontAttributes="Bold" />
+            <CollectionView x:Name="ContinueReadingCollectionView" HeightRequest="250" SelectionMode="Single" SelectionChanged="OnBookSelected">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:LibraryItem">
+                        <VerticalStackLayout WidthRequest="150">
+                            <Image Source="{Binding Media.CoverPath}" Aspect="AspectFill" HeightRequest="200" WidthRequest="150" />
+                            <Label Text="{Binding Media.Metadata.Title}" LineBreakMode="TailTruncation" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Up Next -->
+            <Label Text="Up Next" FontSize="Large" FontAttributes="Bold" />
+            <CollectionView x:Name="UpNextCollectionView" HeightRequest="250" SelectionMode="Single" SelectionChanged="OnBookSelected">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:LibraryItem">
+                        <VerticalStackLayout WidthRequest="150">
+                            <Image Source="{Binding Media.CoverPath}" Aspect="AspectFill" HeightRequest="200" WidthRequest="150" />
+                            <Label Text="{Binding Media.Metadata.Title}" LineBreakMode="TailTruncation" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Newly Added -->
+            <Label Text="Newly Added" FontSize="Large" FontAttributes="Bold" />
+            <CollectionView x:Name="NewlyAddedCollectionView" HeightRequest="250" SelectionMode="Single" SelectionChanged="OnBookSelected">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:LibraryItem">
+                        <VerticalStackLayout WidthRequest="150">
+                            <Image Source="{Binding Media.CoverPath}" Aspect="AspectFill" HeightRequest="200" WidthRequest="150" />
+                            <Label Text="{Binding Media.Metadata.Title}" LineBreakMode="TailTruncation" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator x:Name="LoadingIndicator" IsRunning="True" HorizontalOptions="Center" VerticalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
