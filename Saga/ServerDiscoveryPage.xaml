@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Saga.ServerDiscoveryPage"
+             Title="Connect to Server">
+    
+    <StackLayout Padding="30" VerticalOptions="Center" Spacing="20">
+        
+        <!-- App Logo/Title -->
+        <Label Text="Saga" 
+               FontSize="36" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               TextColor="#007ACC" 
+               Margin="0,0,0,30" />
+        
+        <!-- Welcome Text -->
+        <Label Text="Connect to your Audiobookshelf server" 
+               FontSize="16" 
+               HorizontalOptions="Center" 
+               TextColor="Gray" 
+               HorizontalTextAlignment="Center"
+               Margin="0,0,0,20" />
+        
+        <!-- Server URL Input -->
+        <Entry x:Name="ServerUrlEntry" 
+               Placeholder="Server URL (e.g., https://audiobookshelf.example.com)" 
+               Text=""
+               FontSize="16"
+               HeightRequest="50" />
+        
+        <!-- Connect Button -->
+        <Button x:Name="ConnectButton" 
+                Text="Connect" 
+                Clicked="OnConnectButtonClicked"
+                BackgroundColor="#007ACC" 
+                TextColor="White"
+                FontSize="16"
+                HeightRequest="50"
+                CornerRadius="8"
+                Margin="0,10,0,0" />
+        
+        <!-- Loading Indicator -->
+        <ActivityIndicator x:Name="LoadingIndicator" 
+                          IsVisible="False" 
+                          IsRunning="False" 
+                          HorizontalOptions="Center"
+                          Color="#007ACC" />
+        
+        <!-- Status Label -->
+        <Label x:Name="StatusLabel" 
+               Text=""
+               FontSize="14"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               TextColor="Gray"
+               IsVisible="False" />
+        
+        <!-- Help Text -->
+        <Label Text="Enter the URL of your Audiobookshelf server. The app will discover available login methods."
+               FontSize="12" 
+               TextColor="Gray" 
+               HorizontalTextAlignment="Center" 
+               Margin="0,30,0,0" />
+        
+    </StackLayout>
+    
+</ContentPage>

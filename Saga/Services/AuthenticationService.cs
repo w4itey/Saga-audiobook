@@ -141,6 +141,8 @@ namespace Saga.Services
 
         public async Task<UserProfile> GetCurrentUserAsync()
         {
+            // Ensure current session is loaded
+            await LoadCurrentSessionAsync();
             return _currentSession?.CurrentUser;
         }
 
@@ -280,6 +282,9 @@ namespace Saga.Services
 
         public async Task<string> GetValidTokenAsync()
         {
+            // Ensure current session is loaded
+            await LoadCurrentSessionAsync();
+            
             if (_currentSession?.CurrentUser != null)
             {
                 var token = await SecureStorage.GetAsync($"user_token_{_currentSession.CurrentUser.Id}");
@@ -336,11 +341,58 @@ namespace Saga.Services
                 // Add to available users if not already present
                 await AddUserAsync(user);
                 
+                // Persist current session
+                await PersistCurrentSessionAsync();
+                
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        private async Task LoadCurrentSessionAsync()
+        {
+            try
+            {
+                // Only load if session is empty
+                if (_currentSession?.CurrentUser != null) return;
+                
+                var currentUserId = await SecureStorage.GetAsync("current_user_id");
+                if (!string.IsNullOrEmpty(currentUserId))
+                {
+                    // Load user profile
+                    var userProfileJson = await SecureStorage.GetAsync($"user_profile_{currentUserId}");
+                    if (!string.IsNullOrEmpty(userProfileJson))
+                    {
+                        var userProfile = JsonSerializer.Deserialize<UserProfile>(userProfileJson);
+                        if (userProfile != null)
+                        {
+                            _currentSession.CurrentUser = userProfile;
+                            _currentSession.PrimaryUserId = userProfile.Id;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadCurrentSessionAsync error: {ex.Message}");
+            }
+        }
+
+        private async Task PersistCurrentSessionAsync()
+        {
+            try
+            {
+                if (_currentSession?.CurrentUser != null)
+                {
+                    await SecureStorage.SetAsync("current_user_id", _currentSession.CurrentUser.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"PersistCurrentSessionAsync error: {ex.Message}");
             }
         }
     }
