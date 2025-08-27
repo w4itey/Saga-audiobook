@@ -10,6 +10,7 @@ public partial class AppShell : Shell
 		System.Diagnostics.Debug.WriteLine("AppShell constructor called");
 
 		Routing.RegisterRoute(nameof(LibraryPage), typeof(LibraryPage));
+		Routing.RegisterRoute(nameof(LibraryPageSimple), typeof(LibraryPageSimple));
 		Routing.RegisterRoute(nameof(BookDetailPage), typeof(BookDetailPage));
 	}
 }

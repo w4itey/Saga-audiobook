@@ -12,8 +12,8 @@
 		<ApplicationTitle>Saga</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.saga</ApplicationId>
-		<ApplicationIdGuid>a0a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1</ApplicationIdGuid>
+		<ApplicationId>com.saga.audiobook</ApplicationId>
+		<ApplicationIdGuid>b1b2b3b4-c5c6-d7d8-e9e0-f1f2f3f4f5f6</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

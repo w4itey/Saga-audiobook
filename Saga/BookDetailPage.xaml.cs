@@ -34,7 +34,7 @@ namespace Saga
                 var token = await _authService.GetValidTokenAsync();
                 var serverUrl = currentUser?.ServerUrls.FirstOrDefault();
 
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(BookId))
                 {
                     await DisplayAlert("Authentication Error", "Authentication expired. Please login again.", "OK");
                     Application.Current.MainPage = new NavigationPage(new LoginPage());
@@ -43,12 +43,30 @@ namespace Saga
 
                 _book = await _apiClient.GetLibraryItemAsync(serverUrl, token, BookId);
 
-                if (_book != null)
+                if (_book?.Media?.Metadata != null)
                 {
-                    TitleLabel.Text = _book.Media.Metadata.Title;
-                    SeriesLabel.Text = _book.Media.Metadata.SeriesName;
-                    DescriptionLabel.Text = _book.Media.Metadata.Description;
-                    CoverImage.Source = _book.Media.CoverPath;
+                    if (TitleLabel != null)
+                        TitleLabel.Text = _book.Media.Metadata.Title ?? "Unknown Title";
+                    if (SeriesLabel != null)
+                        SeriesLabel.Text = _book.Media.Metadata.SeriesName ?? "";
+                    if (DescriptionLabel != null)
+                        DescriptionLabel.Text = _book.Media.Metadata.Description ?? "No description available";
+                    if (CoverImage != null && !string.IsNullOrEmpty(_book.Id))
+                    {
+                        // Use Audiobookshelf API endpoint for cover image
+                        var coverUrl = $"{serverUrl.TrimEnd('/')}/api/items/{_book.Id}/cover";
+                        CoverImage.Source = coverUrl;
+                        System.Diagnostics.Debug.WriteLine($"BookDetail CoverPath set to: {coverUrl}");
+                    }
+                }
+                else
+                {
+                    if (TitleLabel != null)
+                        TitleLabel.Text = "Book not found";
+                    if (SeriesLabel != null)
+                        SeriesLabel.Text = "";
+                    if (DescriptionLabel != null)
+                        DescriptionLabel.Text = "Unable to load book details";
                 }
             }
             catch (Exception ex)

@@ -14,27 +14,54 @@ namespace Saga
 
         public LibraryPage()
         {
-            InitializeComponent();
-            _apiClient = new AudiobookshelfApiClient();
-            _authService = new AuthenticationService();
+            System.Diagnostics.Debug.WriteLine("LibraryPage constructor called");
+            try
+            {
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("LibraryPage InitializeComponent completed");
+                _apiClient = new AudiobookshelfApiClient();
+                _authService = new AuthenticationService();
+                System.Diagnostics.Debug.WriteLine("LibraryPage constructor completed successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LibraryPage constructor error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw;
+            }
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await LoadLibraryItems();
+            
+            System.Diagnostics.Debug.WriteLine($"LibraryPage OnAppearing - LibraryId: {LibraryId}");
+            
+            try
+            {
+                await LoadLibraryItems();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in OnAppearing: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                await DisplayAlert("Error", $"Failed to load library: {ex.Message}", "OK");
+            }
         }
 
         private async Task LoadLibraryItems()
         {
-            LoadingIndicator.IsVisible = true;
+            System.Diagnostics.Debug.WriteLine($"LoadLibraryItems started - LibraryId: {LibraryId}");
+            
+            if (LoadingIndicator != null)
+                LoadingIndicator.IsVisible = true;
             try
             {
                 var currentUser = await _authService.GetCurrentUserAsync();
                 var token = await _authService.GetValidTokenAsync();
-                var serverUrl = currentUser?.ServerUrls.FirstOrDefault();
+                var serverUrl = currentUser?.ServerUrls?.FirstOrDefault();
 
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl))
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(LibraryId))
                 {
                     await DisplayAlert("Authentication Error", "Authentication expired. Please login again.", "OK");
                     Application.Current.MainPage = new NavigationPage(new LoginPage());
@@ -46,21 +73,27 @@ namespace Saga
                 if (shelves != null)
                 {
                     var continueReadingShelf = shelves.FirstOrDefault(s => s.Id == "continue-listening");
-                    if (continueReadingShelf != null)
+                    if (continueReadingShelf?.Entities != null && ContinueReadingCollectionView != null)
                     {
-                        ContinueReadingCollectionView.ItemsSource = continueReadingShelf.Entities;
+                        var items = continueReadingShelf.Entities.Where(e => e != null).ToList();
+                        FixCoverPaths(items, serverUrl);
+                        ContinueReadingCollectionView.ItemsSource = items;
                     }
 
                     var continueSeriesShelf = shelves.FirstOrDefault(s => s.Id == "continue-series");
-                    if (continueSeriesShelf != null)
+                    if (continueSeriesShelf?.Entities != null && UpNextCollectionView != null)
                     {
-                        UpNextCollectionView.ItemsSource = continueSeriesShelf.Entities;
+                        var items = continueSeriesShelf.Entities.Where(e => e != null).ToList();
+                        FixCoverPaths(items, serverUrl);
+                        UpNextCollectionView.ItemsSource = items;
                     }
 
                     var recentlyAddedShelf = shelves.FirstOrDefault(s => s.Id == "recently-added");
-                    if (recentlyAddedShelf != null)
+                    if (recentlyAddedShelf?.Entities != null && NewlyAddedCollectionView != null)
                     {
-                        NewlyAddedCollectionView.ItemsSource = recentlyAddedShelf.Entities;
+                        var items = recentlyAddedShelf.Entities.Where(e => e != null).ToList();
+                        FixCoverPaths(items, serverUrl);
+                        NewlyAddedCollectionView.ItemsSource = items;
                     }
                 }
             }
@@ -70,7 +103,8 @@ namespace Saga
             }
             finally
             {
-                LoadingIndicator.IsVisible = false;
+                if (LoadingIndicator != null)
+                    LoadingIndicator.IsVisible = false;
             }
         }
 
@@ -78,13 +112,37 @@ namespace Saga
         {
             if (e.CurrentSelection.FirstOrDefault() is LibraryItem selectedBook)
             {
-                await Shell.Current.GoToAsync($"{nameof(BookDetailPage)}?bookId={selectedBook.Id}");
+                var bookDetailPage = new BookDetailPage();
+                bookDetailPage.BookId = selectedBook.Id;
+                await Navigation.PushAsync(bookDetailPage);
             }
 
             // Clear selection
             if(sender is CollectionView collectionView)
             {
                 collectionView.SelectedItem = null;
+            }
+        }
+
+        private void FixCoverPaths(List<LibraryItem> items, string serverUrl)
+        {
+            System.Diagnostics.Debug.WriteLine($"FixCoverPaths called with serverUrl: {serverUrl}");
+            foreach (var item in items)
+            {
+                if (item?.Media != null && !string.IsNullOrEmpty(item.Id))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Item: {item.Media.Metadata?.Title ?? "Unknown"}");
+                    System.Diagnostics.Debug.WriteLine($"Original CoverPath: '{item.Media.CoverPath ?? "NULL"}'");
+                    
+                    // Always use the Audiobookshelf API endpoint for cover images
+                    var originalPath = item.Media.CoverPath;
+                    item.Media.CoverPath = $"{serverUrl.TrimEnd('/')}/api/items/{item.Id}/cover";
+                    System.Diagnostics.Debug.WriteLine($"Set API CoverPath: '{originalPath}' -> '{item.Media.CoverPath}'");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Skipping item - Media: {item?.Media != null}, ID: '{item?.Id ?? "NULL"}'");
+                }
             }
         }
     }

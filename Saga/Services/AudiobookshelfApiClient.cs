@@ -9,11 +9,9 @@ namespace Saga.Services
 {
     public class AudiobookshelfApiClient
     {
-        private readonly HttpClient _httpClient;
-
+        // Don't store HttpClient as instance variable to avoid reuse issues
         public AudiobookshelfApiClient()
         {
-            _httpClient = new HttpClient();
         }
 
         public async Task<LoginResponse> LoginAsync(string serverUrl, string username, string password)
@@ -27,7 +25,8 @@ namespace Saga.Services
             var json = JsonSerializer.Serialize(loginRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"{serverUrl}/login", content);
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsync($"{serverUrl}/login", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -43,14 +42,14 @@ namespace Saga.Services
             try
             {
                 // Set timeout for server discovery
-                _httpClient.Timeout = TimeSpan.FromSeconds(10);
+                using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) };
                 
                 System.Diagnostics.Debug.WriteLine($"Attempting to connect to: {serverUrl.TrimEnd('/')}/status");
                 
                 // First try a simple ping to test basic connectivity
                 try
                 {
-                    var pingResponse = await _httpClient.GetAsync($"{serverUrl.TrimEnd('/')}/ping");
+                    var pingResponse = await httpClient.GetAsync($"{serverUrl.TrimEnd('/')}/ping");
                     System.Diagnostics.Debug.WriteLine($"Ping response: {pingResponse.StatusCode}");
                 }
                 catch (Exception pingEx)
@@ -59,7 +58,7 @@ namespace Saga.Services
                 }
                 
                 // Use the correct Audiobookshelf status endpoint
-                var response = await _httpClient.GetAsync($"{serverUrl.TrimEnd('/')}/status");
+                var response = await httpClient.GetAsync($"{serverUrl.TrimEnd('/')}/status");
 
                 System.Diagnostics.Debug.WriteLine($"Status response code: {response.StatusCode}");
                 
@@ -170,7 +169,8 @@ namespace Saga.Services
                 var codeVerifier = await SecureStorage.GetAsync("oauth_code_verifier");
                 
                 // Exchange authorization code for tokens
-                var response = await _httpClient.PostAsync($"{serverUrl}/auth/openid/callback", 
+                using var httpClient = new HttpClient();
+                var response = await httpClient.PostAsync($"{serverUrl}/auth/openid/callback", 
                     new StringContent(JsonSerializer.Serialize(new {
                         code = authorizationCode,
                         code_verifier = codeVerifier
@@ -224,7 +224,8 @@ namespace Saga.Services
                 var callbackUrl = $"{serverUrl.TrimEnd('/')}/auth/openid/callback";
                 System.Diagnostics.Debug.WriteLine($"Calling: {callbackUrl}");
 
-                var response = await _httpClient.PostAsync(callbackUrl, content);
+                using var httpClient = new HttpClient();
+                var response = await httpClient.PostAsync(callbackUrl, content);
 
                 System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
 
@@ -331,13 +332,13 @@ namespace Saga.Services
             try
             {
                 // Set timeout to prevent infinite loading
-                _httpClient.Timeout = TimeSpan.FromSeconds(30);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(30) };
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 
                 var url = $"{serverUrl}/api/libraries";
                 System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
                 
-                var response = await _httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
                 
                 System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
                 
@@ -373,13 +374,13 @@ namespace Saga.Services
             try
             {
                 // Set timeout to prevent infinite loading
-                _httpClient.Timeout = TimeSpan.FromSeconds(30);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(30) };
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 
                 var url = $"{serverUrl}/api/libraries/{libraryId}/items";
                 System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
                 
-                var response = await _httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
                 
                 System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
                 
@@ -414,13 +415,13 @@ namespace Saga.Services
         {
             try
             {
-                _httpClient.Timeout = TimeSpan.FromSeconds(30);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(30) };
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"{serverUrl}/api/libraries/{libraryId}/personalized";
                 System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
 
-                var response = await _httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
 
                 System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
 
@@ -455,13 +456,13 @@ namespace Saga.Services
         {
             try
             {
-                _httpClient.Timeout = TimeSpan.FromSeconds(30);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(30) };
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"{serverUrl}/api/items/{itemId}?expanded=1";
                 System.Diagnostics.Debug.WriteLine($"Making request to: {url}");
 
-                var response = await _httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
 
                 System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
 

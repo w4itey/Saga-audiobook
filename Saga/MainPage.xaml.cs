@@ -76,13 +76,43 @@ namespace Saga
 
         private async void OnLibrarySelected(object sender, SelectionChangedEventArgs e)
         {
-            if (e.CurrentSelection.FirstOrDefault() is Library selectedLibrary)
+            System.Diagnostics.Debug.WriteLine("OnLibrarySelected called");
+            try
             {
-                await Shell.Current.GoToAsync($"{nameof(LibraryPage)}?libraryId={selectedLibrary.Id}");
+                System.Diagnostics.Debug.WriteLine($"Selection count: {e.CurrentSelection?.Count ?? -1}");
+                var firstSelection = e.CurrentSelection?.FirstOrDefault();
+                System.Diagnostics.Debug.WriteLine($"First selection type: {firstSelection?.GetType()?.Name ?? "NULL"}");
+                
+                if (firstSelection is Library selectedLibrary)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Selected library: {selectedLibrary.Id}, Name: {selectedLibrary.Name}");
+                    
+                    // Use direct navigation since we're using NavigationPage architecture, not Shell
+                    System.Diagnostics.Debug.WriteLine("Using direct navigation...");
+                    var libraryPage = new LibraryPage();
+                    libraryPage.LibraryId = selectedLibrary.Id;
+                    System.Diagnostics.Debug.WriteLine($"Created LibraryPage with ID: {libraryPage.LibraryId}");
+                    
+                    await Navigation.PushAsync(libraryPage);
+                    System.Diagnostics.Debug.WriteLine("Direct navigation completed successfully");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No library selected or selection is not a Library object");
+                }
             }
-            
-            // Clear selection
-            LibrariesCollectionView.SelectedItem = null;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"OnLibrarySelected error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                await DisplayAlert("Navigation Error", $"Failed to navigate to library: {ex.Message}", "OK");
+            }
+            finally
+            {
+                // Clear selection
+                if (LibrariesCollectionView != null)
+                    LibrariesCollectionView.SelectedItem = null;
+            }
         }
     }
 }
